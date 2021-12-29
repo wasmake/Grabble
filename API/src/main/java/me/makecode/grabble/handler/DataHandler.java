@@ -12,7 +12,7 @@ public interface DataHandler {
     void save(Object clazz);
     void delete(Object clazz);
     List<DataAbstract> getAll(Class<?> clazz);
-    DataAbstract getSpecific(Class<?> clazz, String paramenter, Object identifier);
+    DataAbstract getSpecific(Class<?> clazz, String parameter, Object identifier);
     boolean isConnected();
     DataOM getDataOM();
     GenericDatastorage getDataStorage();
