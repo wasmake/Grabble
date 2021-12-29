@@ -10,9 +10,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DataManager {
-    private HashMap<Object, DataAbstract> dataCache;
+    private Map<Object, DataAbstract> dataCache;
     private String parameter;
     private Class<?> data, from;
     private SimpleDataHandler dataHandler;
@@ -93,7 +95,7 @@ public class DataManager {
         return getFromDB(identifier);
     }
 
-    public HashSet<DataAbstract> getCache(){
+    public Set<DataAbstract> getCache(){
         if(cache) return new HashSet<>(dataCache.values());
         return new HashSet<>();
     }

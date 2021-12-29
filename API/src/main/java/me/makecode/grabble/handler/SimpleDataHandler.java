@@ -4,41 +4,42 @@ import me.makecode.grabble.abstraction.DataManager;
 import me.makecode.grabble.object.DataAbstract;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public abstract class SimpleDataHandler implements DataHandler {
 
-    private HashSet<DataManager> dataManagerList;
+    private Set<DataManager> dataManagerList;
 
     public SimpleDataHandler(){
         dataManagerList = new HashSet<>();
     }
 
-    public HashSet<DataManager> unloadLeave(){
-        HashSet<DataManager> managersList = new HashSet<>();
+    public Set<DataManager> unloadLeave(){
+        Set<DataManager> managersList = new HashSet<>();
         for(DataManager dataManager : dataManagerList){
             if(dataManager.isLeave()) managersList.add(dataManager);
         }
         return managersList;
     }
 
-    public HashSet<DataManager> unloadDisable(){
-        HashSet<DataManager> managersList = new HashSet<>();
+    public Set<DataManager> unloadDisable(){
+        Set<DataManager> managersList = new HashSet<>();
         for(DataManager dataManager : dataManagerList){
             if(dataManager.isDisable()) managersList.add(dataManager);
         }
         return managersList;
     }
 
-    public HashSet<DataManager> loadJoin(){
-        HashSet<DataManager> managersList = new HashSet<>();
+    public Set<DataManager> loadJoin(){
+        Set<DataManager> managersList = new HashSet<>();
         for(DataManager dataManager : dataManagerList){
             if(dataManager.isJoin()) managersList.add(dataManager);
         }
         return managersList;
     }
 
-    public HashSet<DataManager> loadStart(){
-        HashSet<DataManager> managersList = new HashSet<>();
+    public Set<DataManager> loadStart(){
+        Set<DataManager> managersList = new HashSet<>();
         for(DataManager dataManager : dataManagerList){
             if(dataManager.isStart()) managersList.add(dataManager);
         }
@@ -54,7 +55,7 @@ public abstract class SimpleDataHandler implements DataHandler {
         return null;
     }
 
-    public HashSet<DataAbstract> getCache(Class<?> data){
+    public Set<DataAbstract> getCache(Class<?> data){
         for(DataManager dataManager : dataManagerList){
             if(dataManager.getData().equals(data)){
                 return dataManager.getCache();
@@ -90,7 +91,7 @@ public abstract class SimpleDataHandler implements DataHandler {
         return null;
     }
 
-    public HashSet<DataManager> getDataManagerList() {
+    public Set<DataManager> getDataManagerList() {
         return dataManagerList;
     }
 }
