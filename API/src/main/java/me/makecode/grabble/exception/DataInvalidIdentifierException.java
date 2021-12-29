@@ -1,4 +1,4 @@
-package me.makecode.grabble.handler;
+package me.makecode.grabble.exception;
 
 public class DataInvalidIdentifierException extends RuntimeException {
 

@@ -1,8 +1,8 @@
-package me.makecode.grabble.handler;
+package me.makecode.grabble.cache.handler;
 
-import me.makecode.grabble.abstraction.DataOM;
-import me.makecode.grabble.abstraction.GenericDatastorage;
-import me.makecode.grabble.object.DataAbstract;
+import me.makecode.grabble.cache.generic.GenericDataOM;
+import me.makecode.grabble.cache.generic.GenericDataStorage;
+import me.makecode.grabble.cache.data.DataAbstract;
 
 import java.util.List;
 
@@ -14,6 +14,6 @@ public interface DataHandler {
     List<DataAbstract> getAll(Class<?> clazz);
     DataAbstract getSpecific(Class<?> clazz, String parameter, Object identifier);
     boolean isConnected();
-    DataOM getDataOM();
-    GenericDatastorage getDataStorage();
+    GenericDataOM getDataOM();
+    GenericDataStorage getDataStorage();
 }

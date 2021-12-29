@@ -1,9 +1,7 @@
-package me.makecode.grabble.abstraction;
+package me.makecode.grabble.cache.data;
 
-import me.makecode.grabble.handler.DataInvalidIdentifierException;
-import me.makecode.grabble.handler.SimpleDataHandler;
-import me.makecode.grabble.object.DataAbstract;
-import me.makecode.grabble.object.DataLoad;
+import me.makecode.grabble.cache.handler.SimpleDataHandler;
+import me.makecode.grabble.exception.DataInvalidIdentifierException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -13,39 +11,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class DataManager {
+public class SimpleDataManager<T> {
     private Map<Object, DataAbstract> dataCache;
     private String parameter;
-    private Class<?> data, from;
+    private T data;
+    private Class<?> from;
     private SimpleDataHandler dataHandler;
-    private DataLoad dataLoad;
-    private boolean cache = false, leave = false, join = false, start = false, disable = true;
+    private DataLoadStrategy dataLoadStrategy;
+    private boolean cache = false;
 
-    public DataManager(Class<?> data, String parameter, SimpleDataHandler dataHandler, boolean cache){
+    public SimpleDataManager(T data, String parameter, SimpleDataHandler dataHandler, boolean cache){
         dataCache = new HashMap<>();
         this.data = data;
         this.parameter = parameter;
         this.cache = cache;
         this.dataHandler = dataHandler;
-        dataHandler.registerClass(data);
+        dataHandler.registerClass(data.getClass());
         dataHandler.getDataManagerList().add(this);
     }
 
-    public DataManager setFrom(Class<?> clazz){
+    public SimpleDataManager setFrom(Class<?> clazz){
         this.from = clazz;
         return this;
     }
 
-    public DataManager loadOperation(DataLoad dataLoad){
-        this.dataLoad = dataLoad;
+    public SimpleDataManager loadOperation(DataLoadStrategy dataLoadStrategy){
+        this.dataLoadStrategy = dataLoadStrategy;
         return this;
     }
 
     public DataAbstract load(Object object){
         try {
             if(from.isAssignableFrom(object.getClass())){
-                return get(dataLoad.execute(object));
-            } else throw new DataInvalidIdentifierException(data.getSimpleName() + " with value " + object);
+                return get(dataLoadStrategy.execute(object));
+            } else throw new DataInvalidIdentifierException(data.getClass().getSimpleName() + " with value " + object);
         } catch (DataInvalidIdentifierException exception){
             System.out.println(exception.getMessage());
         }
@@ -61,7 +60,7 @@ public class DataManager {
     }
 
     public void saveAndClose(Object object){
-        Object identifierFromObject = dataLoad.execute(object);
+        Object identifierFromObject = dataLoadStrategy.execute(object);
         saveDataAbstract(load(object));
         if(cache) dataCache.remove(identifierFromObject);
     }
@@ -76,14 +75,6 @@ public class DataManager {
 
     public void saveAll(){
         for(DataAbstract dataAbstract : dataCache.values()) dataHandler.save(dataAbstract);
-    }
-
-    public DataManager setCacheParams(boolean leave, boolean join, boolean start, boolean disable){
-        this.leave = leave;
-        this.join = join;
-        this.start = start;
-        this.disable = disable;
-        return this;
     }
 
     public DataAbstract getViaLoad(Object identifier){
@@ -105,7 +96,7 @@ public class DataManager {
     }
 
     public DataAbstract getFromDB(Object identifier){
-        DataAbstract dataAbstract = dataHandler.getSpecific(this.data, this.parameter, identifier);
+        DataAbstract dataAbstract = dataHandler.getSpecific(this.data.getClass(), this.parameter, identifier);
         if(dataAbstract == null){
             dataAbstract = getNewInstance(identifier);
         }
@@ -113,7 +104,7 @@ public class DataManager {
     }
 
     public List<DataAbstract> getAllFromDB(){
-        List<DataAbstract> dataAbstracts = dataHandler.getAll(this.data);
+        List<DataAbstract> dataAbstracts = dataHandler.getAll(this.data.getClass());
         if(cache) {
             for(DataAbstract dataAbstract : dataAbstracts){
                 this.dataCache.put(dataAbstract.getId(), dataAbstract);
@@ -125,9 +116,9 @@ public class DataManager {
     public DataAbstract getNewInstance(Object identifier){
         DataAbstract dataAbstract = null;
         try {
-            Constructor constructor = this.data.getConstructor(String.class);
+            Constructor constructor = this.data.getClass().getConstructor(String.class);
             if(!constructor.isAccessible()) constructor.setAccessible(true);
-            dataAbstract = (DataAbstract) this.data.getConstructor(String.class).newInstance(identifier);
+            dataAbstract = (DataAbstract) this.data.getClass().getConstructor(String.class).newInstance(identifier);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -142,7 +133,7 @@ public class DataManager {
     }
 
     public Class<?> getData(){
-        return this.data;
+        return this.data.getClass();
     }
 
 }
